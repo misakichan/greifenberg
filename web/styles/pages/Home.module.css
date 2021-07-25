@@ -1,0 +1,202 @@
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  position: relative;
+  text-align: center;
+  color: white;
+  height: 1200px;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.hero > div:nth-child(5) {
+  font-size: 68px;
+  width: 30vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero > div > p {
+  font-size: 24px;
+  width: 22vw;
+}
+
+.hero_img {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  object-fit: contain;
+  z-index: -2;
+  animation: fade 1s ease-in-out, zoomOut 6s forwards;
+}
+
+.hero_img_filter {
+  position: absolute;
+  width: 100%;
+  height: 1200px;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: -1;
+  animation: fade 2s;
+}
+
+.middle_breaker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: white;
+  border-radius: 100%/100px 100px 0 0;
+  /* z-index: -1; */
+}
+
+.middle_breaker > div:nth-child(1) {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.middle_breaker > div:nth-child(2) {
+  color: #c5a872;
+}
+
+.card {
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  padding: 50px;
+  width: 400px;
+  height: 250px;
+  background-color: white;
+  box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%);
+  border-radius: 5px;
+  cursor: default;
+  animation: botIn 2s ease-in-out forwards;
+}
+
+.card > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+}
+
+.card:hover {
+  background-color: #c5a872;
+  transition: background-color 0.4s ease-out;
+}
+
+.card:hover > p {
+  color: white;
+}
+
+.card:hover > div {
+  background-color: rgb(250, 250, 250);
+  width: 100px;
+  height: 100px;
+}
+
+.card > div > svg {
+  fill: #c5a872;
+  width: 50px;
+  height: 50px;
+}
+
+.text_bold {
+  font-weight: bolder;
+}
+
+.curved_img {
+  position: relative;
+  /* top: -100px; */
+  overflow: hidden;
+  height: 800px;
+  z-index: -2;
+}
+
+.curved_img > img {
+  width: 100%;
+  clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0, 50% 10%);
+  z-index: -3;
+  filter: grayscale(0.6);
+}
+
+.outtro {
+  position: absolute;
+  top: 2100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 400px;
+  width: 600px;
+  font-family: "Poppins", sans-serif;
+  color: black;
+  animation: leftIn 2s ease-in-out forwards;
+}
+
+.outtro > p:nth-child(1) {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.outtro > p:nth-child(2) {
+  margin-top: 5px;
+  font-size: 40px;
+  font-size: 500;
+}
+
+.outtro > p:nth-child(2) > span {
+  font-weight: 700;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    zoom: 1;
+  }
+
+  to {
+    -webkit-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    zoom: 1.05;
+  }
+}
+
+@keyframes leftIn {
+  from {
+    left: 0;
+    opacity: 0;
+  }
+
+  to {
+    left: 10%;
+    opacity: 1;
+  }
+}
+
+@keyframes botIn {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: -100px;
+  }
+}

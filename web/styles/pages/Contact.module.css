@@ -1,0 +1,105 @@
+.contact_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 700px;
+  margin: 100px auto;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  color: #23527c;
+}
+
+.contact_info > h1 {
+  font-weight: 400;
+  color: #c5a872;
+  font-size: 40px;
+}
+
+.contact_info > h1 > span {
+  font-weight: 700;
+  color: #c5a872;
+  font-size: 40px;
+}
+
+.contact_cards {
+  display: flex;
+  gap: 50px;
+  margin: 50px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 400px;
+  height: 200px;
+  background-color: #f5edda;
+  text-align: start;
+  padding: 30px 30px 30px 80px;
+  /* box-shadow: 0px 0px 1px 1px black; */
+  border-radius: 5px;
+}
+
+.card > p:nth-child(1) {
+  font-size: 20px;
+  color: #c5a872;
+}
+
+.card > p {
+  margin: 5px 0px;
+}
+
+.outtro {
+  height: 100%;
+  margin: 100px;
+}
+
+.outtro_content_bg {
+  position: relative;
+  top: 0px;
+  left: 40%;
+  height: 1000px;
+  background-color: rgba(177, 174, 174, 0.1);
+  z-index: -1;
+}
+
+.outtro_map {
+  position: absolute;
+  top: 1250px;
+  left: 18%;
+  animation: leftIn 1s ease-in-out forwards;
+}
+
+.dropline {
+  position: absolute;
+  font-family: "Poppins", sans-serif;
+  top: 1280px;
+  color: #54595f;
+  width: 600px;
+  animation: rightIn 2s ease-in-out forwards;
+}
+
+@keyframes leftIn {
+  from {
+    left: 0;
+    opacity: 0;
+  }
+
+  to {
+    left: 18%;
+    opacity: 1;
+  }
+}
+
+@keyframes rightIn {
+  from {
+    right: 0;
+    opacity: 0;
+  }
+
+  to {
+    right: 20%;
+    opacity: 1;
+  }
+}

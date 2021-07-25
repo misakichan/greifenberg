@@ -1,0 +1,16 @@
+.search_panel {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bonds_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  margin: 50px 50px 100px 50px;
+
+  font-family: "Poppins", sans-serif;
+}
