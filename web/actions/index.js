@@ -12,3 +12,10 @@ export const addBond = (bondDetails, type = "default") => {
       };
   }
 };
+
+export const addNotExistBond = (securityCode) => {
+  return {
+    type: "ADD_NOT_EXISTS_BOND",
+    payload: securityCode,
+  };
+};

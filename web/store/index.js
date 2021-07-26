@@ -1,6 +1,7 @@
 const rootState = {
   fetchedBonds: new Map(),
   fetchedBondsMP: new Map(),
+  notExistsBondsMP: new Set(),
 };
 
 export const rootReducer = (state = rootState, action) => {
@@ -22,7 +23,14 @@ export const rootReducer = (state = rootState, action) => {
           fetchedBondsMP: new Map(state.fetchedBondsMP),
         };
       }
+    case "ADD_NOT_EXISTS_BOND":
+      const notExists = state.notExistsBondsMP;
+      notExists.add(action.payload);
 
+      return {
+        ...state,
+        notExistsBondsMP: new Set(notExists),
+      };
     default:
       return { ...state };
   }

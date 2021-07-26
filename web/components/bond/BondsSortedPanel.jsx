@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tab from "@material-ui/core/Tab";
@@ -63,14 +63,14 @@ export default function BondsSortedPanel() {
   const [currentBonds, setCurrentBonds] = useState([]);
   const [totalPage, setTotalPage] = useState(null);
 
-  const handleRuleChange = (event, newValue) => {
+  const handleRuleChange = useCallback((event, newValue) => {
     setRule(newValue);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handlePageChange = (event, newValue) => {
+  const handlePageChange = useCallback((event, newValue) => {
     setCurrentPage(newValue);
-  };
+  }, []);
 
   useEffect(() => {
     fetch(`http://localhost:5000/sortedbonds?rule=${rule}&page=${currentPage}`)
@@ -103,6 +103,18 @@ export default function BondsSortedPanel() {
                 style={{ fontWeight: "bold" }}
               />
               <Tab label='Par Value' value='3' style={{ fontWeight: "bold" }} />
+              <Tab label='Rating' value='4' style={{ fontWeight: "bold" }} />
+              <Tab
+                label='Greifenberg Credit Score'
+                value='5'
+                style={{ fontWeight: "bold" }}
+              />
+              <Tab label='Yield' value='6' style={{ fontWeight: "bold" }} />
+              <Tab
+                label='Trading Volume'
+                value='7'
+                style={{ fontWeight: "bold" }}
+              />
             </TabList>
           </AppBar>
         </MuiThemeProvider>

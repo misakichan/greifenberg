@@ -140,6 +140,7 @@ app.get("/matrixpricing", (req, res) => {
   const queryString = queryMatrixPricingNameBySecurityCode(bond_code);
 
   conn.query(queryString, (err, result, fields) => {
+    console.log(queryString);
     if (result.length > 0) {
       res.send({ data: result[0].matrix_name, status: 200 });
       res.end();
@@ -151,6 +152,7 @@ app.get("/matrixpricing", (req, res) => {
 
   conn.end();
 });
+
 app.listen(devPort, () => {
   console.log(`Server running on localhost:${devPort}`);
 });

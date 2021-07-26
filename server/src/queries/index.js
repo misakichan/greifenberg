@@ -15,7 +15,7 @@ module.exports = {
     orig_rating as official_rating, cur_rating, company_name, company_code from bond_info_new where security_code = ${securityCode}`;
   },
   queryMatrixPricingNameBySecurityCode(securityCode) {
-    return `SELECT matrix_name from matrix_pricing where bond_code = ${securityCode} order by date DESC`;
+    return `SELECT matrix_name from matrix_pricing where bond_code = ${securityCode} and matrix_name is not null order by date DESC`;
   },
   queryMatrixPricingDetailsBySecurityCode(securityCode) {
     return `SELECT bond_code, company_name, maturity / 365 as maturity, coupon, volume, cur_yield, matrix_ytm, matrix_price from matrix_pricing where bond_code=${securityCode} order by date desc`;

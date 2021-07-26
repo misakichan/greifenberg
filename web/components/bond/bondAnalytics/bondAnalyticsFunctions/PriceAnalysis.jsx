@@ -139,6 +139,7 @@ export default function PriceAnalysis({ bid }) {
         if (res.status === 403) {
           setNoReturn(true);
         } else {
+          console.log(res);
           setMatrixNames(
             res.data
               .slice(1, -1)
