@@ -1,6 +1,6 @@
 import styles from "../../styles/components/BondSearchPanel.module.css";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addBond } from "../../actions";
 import { useRouter } from "next/router";
 
@@ -9,6 +9,7 @@ export default function BondSearchPanel() {
   const dispatch = useDispatch();
   const [currentText, setCurrentText] = useState("");
   const [bondId, setBondId] = useState(null);
+  const fetchedBonds = useSelector((state) => state.fetchedBonds);
 
   const handleChange = (e) => {
     setCurrentText(e.target.value);
@@ -16,26 +17,18 @@ export default function BondSearchPanel() {
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
-    fetch(`http://localhost:5000/bond?securitycode="${currentText}"`)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.length === 0) {
-          alert(`${currentText} not found.`);
-        } else {
-          dispatch(addBond(res[0]));
-          setBondId(res[0].security_code);
-        }
-      });
-
-    fetch(`http://localhost:5000/bond?securitycode="${currentText}"&type=mp`)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.length === 0) {
-          alert(`${currentText} not found.`);
-        } else {
-          dispatch(addBond(res, "mp"));
-        }
-      });
+    if (!fetchedBonds.get(currentText)) {
+      fetch(`http://localhost:5000/bond?securitycodes="${currentText}"`)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.length === 0) {
+            return;
+          } else {
+            dispatch(addBond(res[0]));
+            setBondId(res[0].security_code);
+          }
+        });
+    }
   });
 
   useEffect(() => {

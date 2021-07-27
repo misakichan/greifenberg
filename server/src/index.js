@@ -3,8 +3,7 @@ const { createConnection } = require("./database");
 const { devPort } = require("../greifenberg.config");
 const {
   queryBondBySecurityCode,
-  queryMatrixPricingNameBySecurityCode,
-  queryMatrixPricingDetailsBySecurityCode,
+  queryMatrixPricingBySecurityCode,
 } = require("./queries");
 const {
   queryBondsSortedByRule,
@@ -47,6 +46,14 @@ app.use(
   })
 );
 
+const buildResults = (arr, page) => {
+  let result = {};
+  result["data"] = extractSortedBondsFromPage(arr, page);
+  result["totalPage"] = JSON.stringify(
+    Math.ceil(arr.length / NUMBER_BONDS_PER_PAGE)
+  );
+  return result;
+};
 // query sorted bonds
 app.get("/sortedbonds", (req, res) => {
   const rule = req.query.rule;
@@ -55,14 +62,15 @@ app.get("/sortedbonds", (req, res) => {
   let result;
   switch (rule) {
     case "1":
-      result = extractSortedBondsFromPage(bondsSortedByMaturity, page);
+      result = buildResults(bondsSortedByMaturity, page);
       break;
     case "2":
-      result = extractSortedBondsFromPage(bondsSortedByCouponRate, page);
+      result = buildResults(bondsSortedByCouponRate, page);
       break;
     case "3":
-      result = extractSortedBondsFromPage(bondsSortedByParValue, page);
+      result = buildResults(bondsSortedByParValue, page);
     default:
+      result = buildResults(bondsSortedByParValue, page);
       break;
   }
 
@@ -70,35 +78,39 @@ app.get("/sortedbonds", (req, res) => {
   res.end();
 });
 
-// search single bond
-app.get("/bond", (req, res) => {
-  const conn = createConnection();
-  const type = req.query.type;
+/**
+ * Search for single bond, get all required fields
+ * returned Fields are listed in "./queries/index.js"
+ * In following router,
+ * queryBondBySecurityCode(sc) generate the query string for "conn" to query result related to bond
+ * queryMatrixPricingBySecurityCode(sc) generate the query string for "conn" to query fields related to matrix pricing
+ */
 
-  switch (type) {
-    case "mp":
-      conn.query(
-        queryMatrixPricingDetailsBySecurityCode(req.query.securitycode),
-        (err, result, fileds) => {
-          if (result.length === 0) {
-            res.send(result);
-          } else {
-            res.send(result[0]);
-          }
+app.get("/bond", async (req, res) => {
+  const conn = createConnection({ multipleStatements: true });
+  const codes = req.query.securitycodes;
+  const bondsResult = [];
+
+  const codesArray = codes.split(",");
+
+  codesArray.map((sc, idx) => {
+    let bondInfo = {};
+    // query bond info from bond_info_new
+    conn.query(
+      queryBondBySecurityCode(sc) + ";" + queryMatrixPricingBySecurityCode(sc),
+      (err, result, fields) => {
+        result.forEach((item) => {
+          bondInfo = { ...bondInfo, ...item[0] };
+        });
+        bondsResult.push(bondInfo);
+
+        if (idx === codesArray.length - 1) {
+          res.send(bondsResult);
           res.end();
         }
-      );
-      break;
-    default:
-      conn.query(
-        queryBondBySecurityCode(req.query.securitycode),
-        (err, result, fileds) => {
-          res.send(result);
-          res.end();
-        }
-      );
-      break;
-  }
+      }
+    );
+  });
 
   conn.end();
 });
@@ -132,25 +144,6 @@ app.get("/totalpage", (req, res) => {
   }
 
   res.end();
-});
-
-app.get("/matrixpricing", (req, res) => {
-  const bond_code = req.query.bondcode;
-  const conn = createConnection();
-  const queryString = queryMatrixPricingNameBySecurityCode(bond_code);
-
-  conn.query(queryString, (err, result, fields) => {
-    console.log(queryString);
-    if (result.length > 0) {
-      res.send({ data: result[0].matrix_name, status: 200 });
-      res.end();
-    } else {
-      res.send({ status: 403 });
-      res.end();
-    }
-  });
-
-  conn.end();
 });
 
 app.listen(devPort, () => {

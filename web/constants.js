@@ -1,10 +1,13 @@
 export const SORTED_BONDS_TABLE_HEADER_MAPPING = {
   Name: "abbreviation",
-  "Security Code": "security_code",
+  Ownership: "ownership",
+  // "Security Code": "security_code",
   "Par Value": "par_value",
   "Coupon Rate": "coupon_rate",
   Maturity: "maturity",
-  "Official Rating": "official_rating",
+  Volume: "volume",
+  "Issue Rating": "issu_rating",
+  // "Issue Rater": "issu_rater",
 };
 
 export const MATRIX_PRICING_DETAILS_TABLE_HEADER_MAPPING = {

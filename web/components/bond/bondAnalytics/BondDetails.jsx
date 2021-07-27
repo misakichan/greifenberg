@@ -59,7 +59,6 @@ export default function BondDetails({ bid }) {
   const classes = useStyles();
 
   const bondDetails = useSelector((state) => state.fetchedBonds.get(bid));
-  const bondDetailsMP = useSelector((state) => state.fetchedBondsMP.get(bid));
 
   const renderEntry = useCallback((field, value) => {
     return (
@@ -82,10 +81,7 @@ export default function BondDetails({ bid }) {
         {renderEntry("Abbreviation", bondDetails.abbreviation)}
         {renderEntry("Par Value", bondDetails.par_value)}
         {renderEntry("Coupon Rate", bondDetails.coupon_rate)}
-        {renderEntry(
-          "Maturity",
-          bondDetailsMP ? bondDetailsMP.maturity : bondDetails.maturity
-        )}
+        {renderEntry("Maturity", bondDetails.maturity)}
         {renderEntry("Official Rate", bondDetails.official_rating)}
       </div>
     </div>

@@ -5,9 +5,20 @@ import Tab from "@material-ui/core/Tab";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
-import BondsDisplayPanel from "./BondsDisplayPanel";
 import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
+import BondsPanel from "../utilsComponents/BondsPanel";
+import { SORTED_BONDS_TABLE_HEADER_MAPPING } from "../../constants";
+
+const TAB_NAMES = {
+  1: "Maturity",
+  2: "Coupon Rate",
+  3: "Par Value",
+  4: "Rating",
+  5: "Greifenberg Credit Score",
+  6: "Yield",
+  7: "Trading Volume",
+};
 
 const theme = createTheme({
   overrides: {
@@ -77,14 +88,13 @@ export default function BondsSortedPanel() {
       .then((res) => {
         return res.json();
       })
-      .then((res) => setCurrentBonds(res.map((item) => item.security_code)));
+      .then((res) => {
+        const totalPage = res.totalPage;
+        const data = res.data;
+        setCurrentBonds(data.map((item) => item.security_code));
+        setTotalPage(totalPage);
+      });
   }, [rule, currentPage]);
-
-  useEffect(() => {
-    fetch(`http://localhost:5000/totalpage?rule=${rule}`)
-      .then((res) => res.json())
-      .then((res) => setTotalPage(res));
-  }, [rule]);
 
   return (
     <div className={classes.root}>
@@ -92,45 +102,35 @@ export default function BondsSortedPanel() {
       <TabContext value={rule}>
         <MuiThemeProvider theme={theme}>
           <AppBar position='static'>
-            <TabList
-              onChange={handleRuleChange}
-              aria-label='sort rules'
-              centered={true}>
-              <Tab label='Maturity' value='1' style={{ fontWeight: "bold" }} />
-              <Tab
-                label='Coupon Rate'
-                value='2'
-                style={{ fontWeight: "bold" }}
-              />
-              <Tab label='Par Value' value='3' style={{ fontWeight: "bold" }} />
-              <Tab label='Rating' value='4' style={{ fontWeight: "bold" }} />
-              <Tab
-                label='Greifenberg Credit Score'
-                value='5'
-                style={{ fontWeight: "bold" }}
-              />
-              <Tab label='Yield' value='6' style={{ fontWeight: "bold" }} />
-              <Tab
-                label='Trading Volume'
-                value='7'
-                style={{ fontWeight: "bold" }}
-              />
+            <TabList onChange={handleRuleChange} centered={true}>
+              {Object.entries(TAB_NAMES).map(([label, value], idx) => {
+                return (
+                  <Tab
+                    label={value}
+                    value={label}
+                    style={{ fontWeight: "bold" }}
+                    key={idx}
+                  />
+                );
+              })}
             </TabList>
           </AppBar>
         </MuiThemeProvider>
 
-        <StyledTablePanel value='1'>
-          <BondsDisplayPanel bonds={currentBonds} />
-        </StyledTablePanel>
-        <StyledTablePanel value='2'>
-          <BondsDisplayPanel bonds={currentBonds} />
-        </StyledTablePanel>
-        <StyledTablePanel value='3'>
-          <BondsDisplayPanel bonds={currentBonds} />
-        </StyledTablePanel>
+        {Object.keys(TAB_NAMES).map((value, idx) => {
+          return (
+            <StyledTablePanel value={value} key={idx}>
+              <BondsPanel
+                bonds={currentBonds}
+                mappings={SORTED_BONDS_TABLE_HEADER_MAPPING}
+              />
+            </StyledTablePanel>
+          );
+        })}
+
         <div className={classes.pagination}>
           <Pagination
-            count={totalPage}
+            count={parseInt(totalPage)}
             variant='outlined'
             shape='rounded'
             onChange={handlePageChange}

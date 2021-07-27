@@ -1,25 +1,14 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import { MATRIX_PRICING_DETAILS_TABLE_HEADER_MAPPING } from "../../../../constants";
-import { StyledTableCell } from "../../../decoratedComponents";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import BondEntry from "../../BondEntry";
 import MuiAlert from "@material-ui/lab/Alert";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
+import BondsPanel from "../../../utilsComponents/BondsPanel";
 
 const useStyles = makeStyles({
-  table: {
-    margin: "auto auto",
-  },
   explain: {
     fontFamily: "Poppins",
   },
@@ -45,116 +34,32 @@ const useStyles = makeStyles({
     fontSize: "60px",
     color: "green",
   },
+  h1: {
+    fontSize: "38px",
+    margin: "30px 0px 10px 0px",
+  },
 });
-
-// this is a table component
-function ReferenceBondsPanel({ bonds }) {
-  const classes = useStyles();
-  const renderBody = () => {
-    if (bonds.length === 0) {
-      return <TableBody></TableBody>;
-    } else {
-      return (
-        <TableBody>
-          {bonds.map((id) => {
-            return (
-              <BondEntry
-                key={id}
-                id={id}
-                type='mp'
-                mappings={MATRIX_PRICING_DETAILS_TABLE_HEADER_MAPPING}
-              />
-            );
-          })}
-        </TableBody>
-      );
-    }
-  };
-
-  return (
-    <TableContainer component={Paper} style={{ borderRadius: 0 }}>
-      <Table className={classes.table} aria-label='customized table'>
-        <TableHead>
-          <TableRow>
-            {Object.keys(MATRIX_PRICING_DETAILS_TABLE_HEADER_MAPPING).map(
-              (header, idx) => {
-                return (
-                  <StyledTableCell align='left' key={idx}>
-                    {header}
-                  </StyledTableCell>
-                );
-              }
-            )}
-          </TableRow>
-        </TableHead>
-        {renderBody()}
-      </Table>
-    </TableContainer>
-  );
-}
-
-function TargetBondPanel({ bid }) {
-  const classes = useStyles();
-  return (
-    <TableContainer component={Paper} style={{ borderRadius: 0 }}>
-      <Table className={classes.table} aria-label='customized table'>
-        <TableHead>
-          <TableRow>
-            {Object.keys(MATRIX_PRICING_DETAILS_TABLE_HEADER_MAPPING).map(
-              (header, idx) => {
-                return (
-                  <StyledTableCell align='left' key={idx}>
-                    {header}
-                  </StyledTableCell>
-                );
-              }
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          <BondEntry
-            key={bid}
-            id={bid}
-            type='mp'
-            mappings={MATRIX_PRICING_DETAILS_TABLE_HEADER_MAPPING}
-          />
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
 
 export default function PriceAnalysis({ bid }) {
   const classes = useStyles();
   const bondDetails = useSelector((state) => state.fetchedBonds.get(bid));
-  const [noReturn, setNoReturn] = useState(false);
 
-  const [matrixNames, setMatrixNames] = useState([]);
-
-  useEffect(() => {
-    const bondCode = bondDetails.security_code;
-    fetch(`http://localhost:5000/matrixpricing?bondcode="${bondCode}"`)
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status === 403) {
-          setNoReturn(true);
-        } else {
-          console.log(res);
-          setMatrixNames(
-            res.data
-              .slice(1, -1)
-              .split(" ")
-              .map((item) => item.slice(1, -1))
-          );
-        }
-      });
-  }, [bid]);
+  const matrixNames = useMemo(() => {
+    if (bondDetails.matrix_name) {
+      return bondDetails.matrix_name
+        .slice(1, -1)
+        .split(" ")
+        .map((item) => item.slice(1, -1));
+    } else {
+      return null;
+    }
+  });
 
   return (
     <div>
-      {noReturn ? (
+      {matrixNames ? null : (
         <MuiAlert severity='error'>Data is unavailable currently.</MuiAlert>
-      ) : null}
+      )}
       <Accordion>
         <AccordionSummary aria-controls='panel1a-content' id='panel1a-header'>
           <MuiAlert elevation={8} variant='filled' severity='info'>
@@ -182,30 +87,30 @@ export default function PriceAnalysis({ bid }) {
             distance.
           </Typography>
           <div className={classes.workflow}>
-            <h2>Reference Bonds</h2>
+            <div className={classes.h1}>Reference Bonds</div>
             <div className={classes.imgs}>
               <img src='/u1792.png' />
               <img src='/u1786.svg' />
               <img src='/u1787.png' height='180' />
             </div>
             <div>
-              <h2>
+              <div className={classes.h1}>
                 Target Bond Rate:
                 <span className={classes.rating}>
                   {bondDetails.cur_rating || "Unavailable"}
                 </span>
-              </h2>
+              </div>
             </div>
           </div>
         </AccordionDetails>
       </Accordion>
       <div>
-        <h1 className={classes.h1}>Target Bond</h1>
-        <TargetBondPanel bid={bid} />
+        <div className={classes.h1}>Target Bond</div>
+        <BondsPanel bonds={[bid]} />
       </div>
       <div>
-        <h1 className={classes.h1}>Reference Bonds</h1>
-        <ReferenceBondsPanel bonds={matrixNames} />
+        <div className={classes.h1}>Reference Bonds</div>
+        <BondsPanel bonds={matrixNames || []} />
       </div>
     </div>
   );

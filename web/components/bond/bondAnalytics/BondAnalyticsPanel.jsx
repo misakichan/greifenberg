@@ -19,7 +19,6 @@ const TAB_TITLES = [
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role='tabpanel'
@@ -27,11 +26,7 @@ function TabPanel(props) {
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}
       {...other}>
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 }
@@ -97,7 +92,7 @@ export default function BondAnalyticsPanel({ bid }) {
         Item Four
       </TabPanel>
       <TabPanel value={value} index={4}>
-        <PriceAnalysis bid={bid}></PriceAnalysis>
+        <PriceAnalysis bid={bid} />
       </TabPanel>
       <TabPanel value={value} index={5}>
         Item Six
